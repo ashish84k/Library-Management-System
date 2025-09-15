@@ -91,7 +91,7 @@ const Signup = async (req, res) => {
       name,
       email,
       password: hashedPassword, // hashed password
-      role: "user", // default role
+      role: "admin", // default role
     });
 
     //Return response
