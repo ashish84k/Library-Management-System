@@ -24,8 +24,8 @@ UsersRouter.put("/:id", async (req, res) => {
   try {
     const updates = {};
 
-    // Filter only fields that exist in req.body
-    const allowedFields = ["name", "email", "role", "password"]; // jo fields update ho sakti hain
+    // Allowed fields (exclude password)
+    const allowedFields = ["name", "email", "role"];
     allowedFields.forEach(field => {
       if (req.body[field] !== undefined) {
         updates[field] = req.body[field];
@@ -44,6 +44,7 @@ UsersRouter.put("/:id", async (req, res) => {
     res.status(400).json({ message: "Error updating user", error: error.message });
   }
 });
+
 
 
 // ✅ Delete user by ID
