@@ -112,18 +112,28 @@ const Signup = async (req, res) => {
 
 const userLogout = (req, res) => {
   try {
+    const isProd = process.env.NODE_ENV === "production";
+
     // Clear the token cookie
     res.clearCookie("token", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // https me secure
-      sameSite: "strict",
+      secure: isProd,                    // same as login cookie
+      sameSite: isProd ? "None" : "Lax", // must match login cookie
     });
 
-    return res.status(200).json({ success: true, message: "Logged out successfully" });
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully"
+    });
   } catch (error) {
     console.error("Logout error:", error);
-    return res.status(500).json({ success: false, message: "Logout failed", error: error.message });
+    return res.status(500).json({
+      success: false,
+      message: "Logout failed",
+      error: error.message
+    });
   }
 };
+
 
 module.exports = { Signup, Login ,userLogout};
