@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 
 // 1️⃣ Generate JWT token
 const generateToken = (user) => {
-  // user object me id aur role pass karo
   return jwt.sign(
     { id: user._id, role: user.role },
     process.env.JWT_SECRET,
@@ -10,13 +9,15 @@ const generateToken = (user) => {
   );
 };
 
-// 2️⃣ Set token in cookies
+// 2️⃣ Set token in cookies (local + production ready)
 const setCookies = (res, token) => {
+  const isProd = process.env.NODE_ENV === "production";
+
   res.cookie("token", token, {
-    httpOnly: true, 
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "Strict",
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    httpOnly: true,
+    secure: isProd,                      // ✅ Production me true (HTTPS required)
+    sameSite: isProd ? "None" : "Lax",   // ✅ Cross-site allow only in prod
+    maxAge: 24 * 60 * 60 * 1000,         // 1 day
   });
 };
 
