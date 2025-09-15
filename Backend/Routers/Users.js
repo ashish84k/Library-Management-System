@@ -22,13 +22,29 @@ UsersRouter.post("/", Signup);
 // ✅ Update user by ID
 UsersRouter.put("/:id", async (req, res) => {
   try {
-    const updatedUser = await Users.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updates = {};
+
+    // Filter only fields that exist in req.body
+    const allowedFields = ["name", "email", "role", "password"]; // jo fields update ho sakti hain
+    allowedFields.forEach(field => {
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
+    });
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: "No valid fields provided to update" });
+    }
+
+    const updatedUser = await Users.findByIdAndUpdate(req.params.id, updates, { new: true });
     if (!updatedUser) return res.status(404).json({ message: "User not found" });
+
     res.status(200).json({ message: "User updated successfully", updatedUser });
   } catch (error) {
     res.status(400).json({ message: "Error updating user", error: error.message });
   }
 });
+
 
 // ✅ Delete user by ID
 UsersRouter.delete("/:id", async (req, res) => {
